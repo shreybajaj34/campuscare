@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="manifest" href="/campuscare/manifest.json">
+  <meta name="theme-color" content="#2563eb">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusCare - College Grievance & Facility Portal</title>
@@ -972,6 +974,15 @@
         regWrapper.style.display = "block";
       }
     }
+    <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(
+      "/campuscare/service-worker.js"
+    );
+  });
+}
+</script>
   </script>
 </body>
 </html>
