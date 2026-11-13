@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusCare - College Grievance & Facility Portal</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand-wrapper" onclick="APP.showHomeView()">
+        <div class="brand-logo-icon">
+          <i class="fas fa-university"></i>
+        </div>
+        <div>
+          <div class="brand-name">Campus<span>Care</span></div>
+          <div class="brand-sub college-name-text">College Grievance Redressal Portal</div>
+        </div>
+      </div>
+
+      <!-- Backend Live / Local Status Pill -->
+      <div class="nav-center-status">
+        <div id="backendStatusBadge" class="backend-pill local" title="Current database connection status">
+          <span class="dot"></span>
+          <span>Google Sheets: Ready to Connect</span>
+        </div>
+        <button class="btn btn-sm btn-secondary" id="openSheetSettingsBtn">
+          <i class="fas fa-database"></i> Database Setup
+        </button>
+      </div>
+
+      <!-- User Nav Actions -->
+      <div class="nav-actions">
+        <!-- Guest Buttons -->
+        <div id="navGuestActions" style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-secondary btn-sm" onclick="UI.openModal('studentAuthModal')">
+            <i class="fas fa-user-graduate"></i> Student Portal
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="UI.openModal('adminLoginModal')">
+            <i class="fas fa-user-shield"></i> Admin Portal
+          </button>
+        </div>
+
+        <!-- Logged-in User Session Badge -->
+        <div id="navUserSession" style="display: none; align-items: center; gap: 0.75rem;">
+          <div class="user-session-badge">
+            <div id="navUserAvatar" class="user-avatar-small">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info-text">
+              <span id="navUserName" class="user-display-name">Aarav Goyal</span>
+              <span id="navUserRole" class="role-pill role-student">Student</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm btn-logout" title="Sign Out">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN APP VIEWS WRAPPER
+       ======================================================================== -->
+  <main class="main-wrapper">
+
+    <!-- --------------------------------------------------------------------
+         1. PUBLIC HOME VIEW
+         -------------------------------------------------------------------- -->
+    <section id="viewHome">
+      <div class="hero-section">
+        <div class="hero-college-badge">
+          <i class="fas fa-shield-alt text-primary"></i>
+          <span class="college-name-text">CampusCare Central Authority</span>
+        </div>
+
+        <h1 class="hero-title">
+          Campus Grievances Heard, <br>
+          <span class="highlight">Resolved with Transparency.</span>
+        </h1>
+
+        <p class="hero-desc">
+          Official platform for students to report issues in Hostels, Mess, Classrooms, and Transport.
+          Complaints remain strictly confidential and are directly overseen by college administration.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn btn-primary btn-lg" onclick="APP.navigateTo('student')">
+            <i class="fas fa-paper-plane"></i> Lodge Student Grievance
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="APP.navigateTo('admin')">
+            <i class="fas fa-chart-line"></i> Admin Control Panel
+          </button>
+        </div>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="hero-features-grid">
+        <div class="feature-box">
+          <div class="feature-icon-bubble" style="background: #e0e7ff; color: #4338ca;">
+            <i class="fas fa-bed"></i>
+          </div>
+          <h3>Hostel Facilities</h3>
+          <p>Report plumbing, electricity, cleaning, or furniture problems with specific room & block numbers.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-bubble" style="background: #ffedd5; color: #c2410c;">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <h3>Mess & Food Quality</h3>
+          <p>Highlight meal hygiene, food quality, or canteen service issues directly to food safety committees.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-bubble" style="background: #e0f2fe; color: #0284c7;">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <h3>Classrooms & Labs</h3>
+          <p>Notify technicians about faulty projectors, smartboards, broken seating, or AC/fan issues in lecture halls.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-bubble" style="background: #fef3c7; color: #b45309;">
+            <i class="fas fa-bus"></i>
+          </div>
+          <h3>College Transport</h3>
+          <p>Report bus route delays, vehicle conditions, overcrowding, or driver assistance matters immediately.</p>
+        </div>
+      </div>
+
+      <!-- Privacy & Security Guarantee -->
+      <div style="margin-top: 2.5rem; background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem 2rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+          <i class="fas fa-user-lock"></i>
+        </div>
+        <div style="flex: 1;">
+          <h4 style="font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 0.25rem;">Student Privacy & Access Control</h4>
+          <p style="font-size: 0.875rem; color: #64748b; margin: 0;">
+            Every student's grievance is private. You can only view and track the tickets lodged by your roll number. Only authorized college administrators have central visibility to review and resolve campus complaints.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------------------
+         2. STUDENT DASHBOARD VIEW
+         -------------------------------------------------------------------- -->
+    <section id="viewStudent" style="display: none;">
+      <!-- Welcome Banner -->
+      <div class="student-banner">
+        <div class="student-banner-info">
+          <h2>Welcome, <span id="studentWelcomeName">Student</span>!</h2>
+          <div class="student-meta-badges">
+            <span class="student-meta-tag"><i class="fas fa-id-badge"></i> Roll No: <strong id="studentWelcomeRoll">--</strong></span>
+            <span class="student-meta-tag"><i class="fas fa-graduation-cap"></i> Dept: <span id="studentWelcomeDept">General</span></span>
+            <span class="student-meta-tag"><i class="fas fa-lock"></i> Private Student Portal</span>
+          </div>
+        </div>
+        <div class="student-banner-stats">
+          <div class="mini-stat-card">
+            <span id="studentStatTotal" class="mini-stat-num">0</span>
+            <span class="mini-stat-lbl">Total Filed</span>
+          </div>
+          <div class="mini-stat-card">
+            <span id="studentStatPending" class="mini-stat-num">0</span>
+            <span class="mini-stat-lbl">In Review</span>
+          </div>
+          <div class="mini-stat-card">
+            <span id="studentStatProgress" class="mini-stat-num">0</span>
+            <span class="mini-stat-lbl">Active</span>
+          </div>
+          <div class="mini-stat-card">
+            <span id="studentStatResolved" class="mini-stat-num">0</span>
+            <span class="mini-stat-lbl">Resolved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="view-tabs">
+        <button class="tab-btn active" onclick="switchStudentTab('formTab', this)">
+          <i class="fas fa-plus-circle"></i> Lodge New Grievance
+        </button>
+        <button class="tab-btn" onclick="switchStudentTab('historyTab', this)">
+          <i class="fas fa-tasks"></i> My Grievances & Live Tracker
+        </button>
+      </div>
+
+      <!-- TAB 1: Lodge Complaint Form -->
+      <div id="studentTabForm">
+        <div class="form-card">
+          <div class="form-header">
+            <h3>Submit a Facility or Campus Issue</h3>
+            <p>Select the department category below and provide accurate details for prompt inspection.</p>
+          </div>
+
+          <form id="newComplaintForm">
+            <!-- Category Selection Cards -->
+            <label class="category-selection-label">1. Choose Issue Category <span class="req">*</span></label>
+            <div id="categoryCardsContainer" class="category-cards-grid">
+              <!-- Dynamically populated via student.js -->
+            </div>
+
+            <!-- Dynamic Category Specific Fields -->
+            <label class="category-selection-label">2. Category Specific Location & Type <span class="req">*</span></label>
+            <div id="categorySubFieldsContainer">
+              <!-- Dynamically rendered based on active category -->
+            </div>
+
+            <!-- Subject & Description -->
+            <div class="form-group">
+              <label for="complaintTitle">3. Grievance Subject / Title <span class="req">*</span></label>
+              <input type="text" id="complaintTitle" class="form-control" placeholder="Brief summary of the issue (e.g. Geyser tripping in Room 302)" required>
+            </div>
+
+            <div class="form-group">
+              <label for="complaintDescription">4. Detailed Description <span class="req">*</span></label>
+              <textarea id="complaintDescription" class="form-control" rows="4" placeholder="Describe when the issue started, exact location markers, and any attempted fixes..." required></textarea>
+            </div>
+
+            <!-- Urgency Level -->
+            <div class="urgency-selector-wrapper">
+              <label class="category-selection-label">5. Urgency Level <span class="req">*</span></label>
+              <div class="urgency-grid">
+                <div class="urgency-option" data-urgency="Low">
+                  <i class="fas fa-circle text-success"></i> Low
+                  <div style="font-size: 0.68rem; font-weight: normal; color: #64748b;">Minor defect</div>
+                </div>
+                <div class="urgency-option selected" data-urgency="Medium">
+                  <i class="fas fa-circle text-warning"></i> Medium
+                  <div style="font-size: 0.68rem; font-weight: normal; color: #64748b;">Standard priority</div>
+                </div>
+                <div class="urgency-option" data-urgency="High">
+                  <i class="fas fa-circle" style="color: #f97316;"></i> High
+                  <div style="font-size: 0.68rem; font-weight: normal; color: #64748b;">Affects daily routine</div>
+                </div>
+                <div class="urgency-option" data-urgency="Emergency">
+                  <i class="fas fa-exclamation-triangle text-danger"></i> Emergency
+                  <div style="font-size: 0.68rem; font-weight: normal; color: #64748b;">Safety / Immediate</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Upload Area -->
+            <div class="form-group">
+              <label>6. Photo Proof / Attachment <small class="text-muted">(Optional, Max 5MB)</small></label>
+              <div id="imageDropZone" class="upload-dropzone">
+                <input type="file" id="complaintImageFile" accept="image/*" style="display: none;">
+                <div class="upload-icon"><i class="fas fa-camera"></i></div>
+                <div class="upload-text">Drag & drop photo here, or <span style="color: var(--primary); text-decoration: underline;">browse file</span></div>
+                <div class="upload-hint">Supports JPG, PNG, WEBP (Useful for broken appliances, food items, mess, etc.)</div>
+              </div>
+
+              <!-- Image Preview Container -->
+              <div id="imagePreviewContainer" class="image-preview-box" style="display: none; margin-top: 0.75rem;">
+                <img id="imagePreviewImg" src="" alt="Proof Preview" class="preview-thumb">
+                <div class="preview-meta" id="imagePreviewMeta">image.jpg</div>
+                <button type="button" class="btn btn-sm btn-danger" id="removeImageBtn">
+                  <i class="fas fa-trash-alt"></i> Remove
+                </button>
+              </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+              <button type="submit" id="submitComplaintBtn" class="btn btn-primary btn-lg btn-full">
+                <i class="fas fa-paper-plane"></i> Submit Grievance
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 2: Student Complaints Tracker -->
+      <div id="studentTabHistory" style="display: none;">
+        <!-- Filters -->
+        <div class="filter-bar">
+          <div class="search-input-group">
+            <i class="fas fa-search"></i>
+            <input type="text" id="studentSearchTicket" class="form-control" placeholder="Search by Ticket ID, keywords...">
+          </div>
+
+          <div class="filter-group">
+            <label for="studentFilterStatus">Status:</label>
+            <select id="studentFilterStatus" class="form-control" style="width: auto;">
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending Review</option>
+              <option value="Under Review">Under Review</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Rejected">Declined</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="studentFilterCategory">Category:</label>
+            <select id="studentFilterCategory" class="form-control" style="width: auto;">
+              <option value="">All Categories</option>
+              <option value="Hostel">Hostel</option>
+              <option value="Mess">Mess</option>
+              <option value="Classroom">Classroom</option>
+              <option value="Transport">Transport</option>
+              <option value="CampusInfra">Campus Infra</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Complaints List Cards -->
+        <div id="studentComplaintsList">
+          <!-- Dynamically populated via student.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------------------
+         3. MASTER ADMIN DASHBOARD VIEW
+         -------------------------------------------------------------------- -->
+    <section id="viewAdmin" style="display: none;">
+      <div class="admin-header-row">
+        <div class="admin-title-group">
+          <h2>Campus Central Grievance Desk</h2>
+          <p>Real-time grievance monitoring and status dispatch authority for <span class="college-name-text font-bold">College</span></p>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-secondary btn-sm" id="adminRefreshBtn">
+            <i class="fas fa-sync-alt"></i> Refresh Data
+          </button>
+          <button class="btn btn-outline-primary btn-sm" id="adminExportBtn">
+            <i class="fas fa-file-csv"></i> Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Statistics Counters -->
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrapper" style="background: #eff6ff; color: #2563eb;">
+            <i class="fas fa-inbox"></i>
+          </div>
+          <div>
+            <div id="adminStatTotal" class="stat-value">0</div>
+            <div class="stat-title">Total Lodged</div>
+          </div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrapper" style="background: #fffbeb; color: #d97706;">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div>
+            <div id="adminStatPending" class="stat-value">0</div>
+            <div class="stat-title">Pending Action</div>
+          </div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrapper" style="background: #f0fdf4; color: #16a34a;">
+            <i class="fas fa-search"></i>
+          </div>
+          <div>
+            <div id="adminStatReview" class="stat-value">0</div>
+            <div class="stat-title">Under Review</div>
+          </div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrapper" style="background: #f5f3ff; color: #7c3aed;">
+            <i class="fas fa-tools"></i>
+          </div>
+          <div>
+            <div id="adminStatProgress" class="stat-value">0</div>
+            <div class="stat-title">In Progress</div>
+          </div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrapper" style="background: #ecfdf5; color: #059669;">
+            <i class="fas fa-check-double"></i>
+          </div>
+          <div>
+            <div id="adminStatResolved" class="stat-value">0</div>
+            <div class="stat-title">Resolved</div>
+          </div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrapper" style="background: #fff1f2; color: #e11d48;">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div>
+            <div id="adminStatUrgent" class="stat-value">0</div>
+            <div class="stat-title">High / Urgent</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter and Search Bar -->
+      <div class="filter-bar">
+        <div class="search-input-group">
+          <i class="fas fa-search"></i>
+          <input type="text" id="adminSearchInput" class="form-control" placeholder="Search Roll No, Student Name, Ticket ID, keywords...">
+        </div>
+
+        <div class="filter-group">
+          <label>Category:</label>
+          <select id="adminFilterCat" class="form-control" style="width: auto;">
+            <option value="">All Categories</option>
+            <option value="Hostel">Hostel</option>
+            <option value="Mess">Mess</option>
+            <option value="Classroom">Classroom</option>
+            <option value="Transport">Transport</option>
+            <option value="CampusInfra">Campus Infra</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Status:</label>
+          <select id="adminFilterStatus" class="form-control" style="width: auto;">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Under Review">Under Review</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Urgency:</label>
+          <select id="adminFilterUrgency" class="form-control" style="width: auto;">
+            <option value="">All Urgencies</option>
+            <option value="Emergency">Emergency</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Sort:</label>
+          <select id="adminSortBy" class="form-control" style="width: auto;">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="urgency">Highest Urgency</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <span id="adminFilterCount" style="font-size: 0.85rem; font-weight: 600; color: #64748b;">Loading complaints...</span>
+      </div>
+
+      <!-- Complaints Data Table -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Student</th>
+                <th>Category</th>
+                <th>Subject & Location</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Submitted On</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminComplaintsTableBody">
+              <!-- Rendered via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- 1. MASTER ADMIN FIRST-TIME SETUP & PERMANENT LOCK MODAL -->
+  <div id="adminSetupModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fas fa-shield-alt text-primary"></i> Master Admin Initial Setup</h3>
+      </div>
+      <div class="modal-body">
+        <div class="lock-notice-box">
+          <i class="fas fa-lock"></i>
+          <div>
+            <h4>One-Time Setup & Permanent Lock</h4>
+            <p>
+              This is the initial setup for CampusCare. As per system security policy, once you save these master credentials, they will be <strong>permanently locked</strong> in the database to prevent unauthorized resets.
+            </p>
+          </div>
+        </div>
+
+        <form id="adminSetupForm">
+          <div class="form-group">
+            <label for="setupCollegeName">College / University Name <span class="req">*</span></label>
+            <input type="text" id="setupCollegeName" class="form-control" placeholder="e.g. Delhi Technological University" required>
+          </div>
+
+          <div class="form-group">
+            <label for="setupAdminName">Master Administrator Full Name <span class="req">*</span></label>
+            <input type="text" id="setupAdminName" class="form-control" placeholder="e.g. Dr. Ramesh Kumar (Dean Student Affairs)" required>
+          </div>
+
+          <div class="form-group">
+            <label for="setupAdminEmail">Official Email Address <span class="req">*</span></label>
+            <input type="email" id="setupAdminEmail" class="form-control" placeholder="e.g. admin@college.edu" required>
+          </div>
+
+          <div class="form-group">
+            <label for="setupUsername">Admin Login Username <span class="req">*</span></label>
+            <input type="text" id="setupUsername" class="form-control" placeholder="Choose admin username (e.g. campusadmin)" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="setupPassword">Master Password <span class="req">*</span></label>
+              <input type="password" id="setupPassword" class="form-control" placeholder="Min 5 characters" required>
+            </div>
+            <div class="form-group">
+              <label for="setupConfirmPassword">Confirm Password <span class="req">*</span></label>
+              <input type="password" id="setupConfirmPassword" class="form-control" placeholder="Re-enter password" required>
+            </div>
+          </div>
+
+          <div style="margin: 1.25rem 0; background: #f8fafc; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+            <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.825rem; color: #334155; cursor: pointer;">
+              <input type="checkbox" id="setupLockAck" style="margin-top: 3px;" required>
+              <span>I confirm that these master details are correct and acknowledge that this setup will be <strong>permanently locked</strong> upon submission.</span>
+            </label>
+          </div>
+
+          <button type="submit" id="adminSetupSubmitBtn" class="btn btn-primary btn-full btn-lg">
+            <i class="fas fa-lock"></i> Initialize Master Admin & Lock
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. STUDENT AUTH MODAL (LOGIN & REGISTRATION) -->
+  <div id="studentAuthModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fas fa-user-graduate text-primary"></i> Student Access Portal</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Auth Switch Tabs -->
+        <div class="view-tabs" style="margin-bottom: 1.5rem;">
+          <button class="tab-btn active" id="btnTabStudentLogin" onclick="switchStudentAuthMode('login')">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+          <button class="tab-btn" id="btnTabStudentReg" onclick="switchStudentAuthMode('register')">
+            <i class="fas fa-user-plus"></i> New Student Registration
+          </button>
+        </div>
+
+        <!-- Student Login Form -->
+        <div id="studentLoginFormWrapper">
+          <form id="studentLoginForm">
+            <div class="form-group">
+              <label for="studentLoginRoll">College Roll Number <span class="req">*</span></label>
+              <input type="text" id="studentLoginRoll" class="form-control" placeholder="e.g. 23CS101" required>
+            </div>
+
+            <div class="form-group">
+              <label for="studentLoginPass">Password <span class="req">*</span></label>
+              <input type="password" id="studentLoginPass" class="form-control" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" id="studentLoginBtn" class="btn btn-primary btn-full btn-lg">
+              <i class="fas fa-sign-in-alt"></i> Login to Portal
+            </button>
+
+            <div style="margin-top: 1.25rem; font-size: 0.825rem; color: #64748b; text-align: center;">
+              New student? <a href="#" onclick="switchStudentAuthMode('register')">Create an account here</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Student Register Form -->
+        <div id="studentRegisterFormWrapper" style="display: none;">
+          <form id="studentRegisterForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="regRoll">Roll Number <span class="req">*</span></label>
+                <input type="text" id="regRoll" class="form-control" placeholder="e.g. 23CS101" required>
+              </div>
+              <div class="form-group">
+                <label for="regFullName">Full Name <span class="req">*</span></label>
+                <input type="text" id="regFullName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="regEmail">College / Personal Email</label>
+                <input type="email" id="regEmail" class="form-control" placeholder="e.g. rahul@gmail.com">
+              </div>
+              <div class="form-group">
+                <label for="regPhone">Mobile Number</label>
+                <input type="tel" id="regPhone" class="form-control" placeholder="e.g. 9876543210">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="regDepartment">Department / Branch</label>
+                <select id="regDepartment" class="form-control">
+                  <option value="Computer Science">Computer Science & IT</option>
+                  <option value="Electronics & Comm">Electronics & Comm.</option>
+                  <option value="Mechanical Engg">Mechanical Engineering</option>
+                  <option value="Civil Engg">Civil Engineering</option>
+                  <option value="Business Admin">Business Admin (MBA/BBA)</option>
+                  <option value="General Studies">General Science / Arts</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="regType">Resident Status</label>
+                <select id="regType" class="form-control">
+                  <option value="Hosteller">Hosteller (Residing on campus)</option>
+                  <option value="Day Scholar">Day Scholar (Commuter)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="regPassword">Password <span class="req">*</span></label>
+                <input type="password" id="regPassword" class="form-control" placeholder="Create password" required>
+              </div>
+              <div class="form-group">
+                <label for="regConfirmPass">Confirm Password <span class="req">*</span></label>
+                <input type="password" id="regConfirmPass" class="form-control" placeholder="Repeat password" required>
+              </div>
+            </div>
+
+            <button type="submit" id="studentRegisterBtn" class="btn btn-primary btn-full btn-lg">
+              <i class="fas fa-user-plus"></i> Create Student Account
+            </button>
+
+            <div style="margin-top: 1.25rem; font-size: 0.825rem; color: #64748b; text-align: center;">
+              Already registered? <a href="#" onclick="switchStudentAuthMode('login')">Sign in here</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ADMIN LOGIN MODAL -->
+  <div id="adminLoginModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fas fa-lock text-primary"></i> Master Administrator Sign In</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.825rem; color: #1e40af;">
+          <i class="fas fa-info-circle"></i> Authorized personnel only. Access logs are recorded.
+        </div>
+
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label for="adminUser">Admin Username <span class="req">*</span></label>
+            <input type="text" id="adminUser" class="form-control" placeholder="Enter configured admin username" required>
+          </div>
+
+          <div class="form-group">
+            <label for="adminPass">Master Password <span class="req">*</span></label>
+            <input type="password" id="adminPass" class="form-control" placeholder="Enter your master password" required>
+          </div>
+
+          <button type="submit" id="adminLoginBtn" class="btn btn-primary btn-full btn-lg">
+            <i class="fas fa-key"></i> Sign In to Admin Dashboard
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. COMPLAINT SUBMISSION SUCCESS MODAL -->
+  <div id="complaintSuccessModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" style="text-align: center;">
+      <div class="modal-body" style="padding: 2.5rem 2rem;">
+        <div style="width: 64px; height: 64px; background: #ecfdf5; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.25rem;">
+          <i class="fas fa-check"></i>
+        </div>
+
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Grievance Registered Successfully!</h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+          Your complaint has been forwarded to the college administration team for prompt inspection.
+        </p>
+
+        <div style="background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem;">Your Tracking Ticket ID</span>
+          <span id="successTicketId" style="font-size: 1.5rem; font-weight: 800; font-family: monospace; color: #2563eb;">CC-2026-XXXX</span>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+          <button class="btn btn-secondary" onclick="UI.closeModal('complaintSuccessModal')">
+            Lodge Another
+          </button>
+          <button class="btn btn-primary" onclick="UI.closeModal('complaintSuccessModal'); switchStudentTab('historyTab', document.querySelectorAll('.tab-btn')[1]);">
+            <i class="fas fa-list"></i> View in My Tracker
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. STUDENT COMPLAINT DETAIL MODAL -->
+  <div id="complaintDetailModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-alt text-primary"></i> Grievance Details: <span id="detailTicketId" style="font-family: monospace;">--</span></h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span id="detailCategory" class="cat-pill" style="background: #eff6ff; color: #1d4ed8;">--</span>
+            <span id="detailUrgency" class="urgency-pill urgency-medium">Medium</span>
+          </div>
+          <span id="detailStatus" class="status-pill badge-pending">Pending</span>
+        </div>
+
+        <h3 id="detailTitle" style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">--</h3>
+        
+        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.65rem 0.9rem; font-size: 0.85rem; color: #475569; margin-bottom: 1.25rem;">
+          <i class="fas fa-map-marker-alt text-primary"></i> <strong style="margin-left: 0.3rem;">Facility Location:</strong> <span id="detailLocation">--</span>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.35rem;">Description</h4>
+          <p id="detailDescription" style="font-size: 0.95rem; color: #334155; line-height: 1.6; white-space: pre-line;">--</p>
+        </div>
+
+        <!-- Attached Photo -->
+        <div id="detailImageWrapper" style="display: none; margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.35rem;">Attached Photographic Proof</h4>
+          <a id="detailImageLink" href="#" target="_blank">
+            <img id="detailImage" src="" alt="Proof Attachment" style="max-width: 100%; max-height: 320px; border-radius: var(--radius-md); border: 1px solid var(--border-color); object-fit: contain;">
+          </a>
+        </div>
+
+        <!-- Official Admin Remarks Box -->
+        <div id="detailAdminRemarks">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div style="margin-top: 1.5rem; font-size: 0.75rem; color: #94a3b8; display: flex; justify-content: space-between;">
+          <span>Submitted on: <span id="detailDate">--</span></span>
+          <span><i class="fas fa-user-shield"></i> Confidential Student Record</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="UI.closeModal('complaintDetailModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ADMIN MANAGE & UPDATE MODAL -->
+  <div id="adminManageModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3><i class="fas fa-tasks text-primary"></i> Inspect & Update Ticket: <span id="adminModalTicketId" style="font-family: monospace;">--</span></h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div>
+            <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.35rem;">
+              Submitted by: <span id="adminModalStudent">--</span>
+            </div>
+            <h3 id="adminModalTitle" style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">--</h3>
+            <p id="adminModalDesc" style="font-size: 0.9rem; color: #475569; line-height: 1.5; white-space: pre-line; background: #f8fafc; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);"></p>
+          </div>
+
+          <div style="background: #f1f5f9; padding: 1rem; border-radius: var(--radius-md);">
+            <div style="margin-bottom: 0.75rem;">
+              <small class="text-muted d-block">Category</small>
+              <span id="adminModalCategory" class="font-bold text-sm">--</span>
+            </div>
+            <div style="margin-bottom: 0.75rem;">
+              <small class="text-muted d-block">Location Details</small>
+              <span id="adminModalLocation" class="text-sm font-semibold">--</span>
+            </div>
+            <div style="margin-bottom: 0.75rem;">
+              <small class="text-muted d-block">Urgency Level</small>
+              <span id="adminModalUrgency" class="urgency-pill urgency-medium">Medium</span>
+            </div>
+            <div>
+              <small class="text-muted d-block">Lodged Timestamp</small>
+              <span id="adminModalDate" class="text-xs font-mono">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attached Photo for Admin -->
+        <div id="adminModalImageWrapper" style="display: none; margin-bottom: 1.5rem; background: #f8fafc; padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <small class="text-muted font-bold d-block mb-1"><i class="fas fa-camera"></i> Attached Proof from Student:</small>
+          <img id="adminModalImage" src="" alt="Proof" style="max-height: 220px; border-radius: var(--radius-sm); object-fit: contain;">
+        </div>
+
+        <!-- Status & Resolution Update Form -->
+        <form id="adminStatusUpdateForm" style="border-top: 2px solid var(--border-color); padding-top: 1.25rem;">
+          <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem;">
+            <i class="fas fa-edit text-primary"></i> Take Administrative Action
+          </h4>
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label for="adminUpdateStatusSelect">Update Resolution Status <span class="req">*</span></label>
+              <select id="adminUpdateStatusSelect" class="form-control" required>
+                <option value="Pending">Pending</option>
+                <option value="Under Review">Under Review</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="adminUpdateRemarks">Official Remarks / Resolution Notes <small class="text-muted">(Visible to student)</small></label>
+              <textarea id="adminUpdateRemarks" class="form-control" rows="2" placeholder="e.g. Electrician team dispatched with work order #412. Repaired heating coil at 3 PM."></textarea>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button type="button" class="btn btn-secondary" onclick="UI.closeModal('adminManageModal')">Cancel</button>
+            <button type="submit" id="adminSaveStatusBtn" class="btn btn-primary">
+              <i class="fas fa-check"></i> Save & Notify Student
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. GOOGLE SHEETS SETTINGS & SYNC MODAL -->
+  <div id="sheetSettingsModal" class="modal-wrapper">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3><i class="fas fa-table text-success"></i> Google Sheets Backend Integration</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: #475569; margin-bottom: 1.25rem;">
+          CampusCare is built to store all Admin credentials, Students, and Complaints in a <strong>Google Sheet</strong> via Google Apps Script without needing any paid server.
+        </p>
+
+        <form id="sheetConfigForm">
+          <div class="form-group">
+            <label for="sheetUrlInput">Google Apps Script Web App URL</label>
+            <input type="url" id="sheetUrlInput" class="form-control" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+            <small style="color: #64748b; margin-top: 0.35rem; display: block;">
+              Leave blank to run in Browser LocalStorage mode (ready for instant testing).
+            </small>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Save URL
+            </button>
+            <button type="button" id="testSheetConnectionBtn" class="btn btn-secondary">
+              <i class="fas fa-plug"></i> Test Connection
+            </button>
+          </div>
+        </form>
+
+        <!-- Quick Setup Instructions Accordion -->
+        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">
+            <i class="fas fa-book-open text-primary"></i> 3-Minute Setup Instructions for Google Sheet
+          </h4>
+          <ol style="font-size: 0.85rem; color: #475569; padding-left: 1.25rem; line-height: 1.6;">
+            <li>Go to <a href="https://sheets.new" target="_blank" style="font-weight: 700;">sheets.new</a> and create a new sheet named <code>CampusCare_Database</code>.</li>
+            <li>In the menu, open <strong>Extensions &gt; Apps Script</strong>.</li>
+            <li>Delete any default code and paste the code from <code>google-apps-script/Code.gs</code>.</li>
+            <li>Click <strong>Deploy &gt; New deployment</strong>.</li>
+            <li>Select type <strong>Web app</strong>. Set <em>Execute as:</em> <strong>Me</strong> and <em>Who has access:</em> <strong>Anyone</strong>.</li>
+            <li>Click <strong>Deploy</strong>, copy the generated Web App URL, and paste it into the box above!</li>
+          </ol>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="UI.closeModal('sheetSettingsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ========================================================================
+       JAVASCRIPT MODULES
+       ======================================================================== -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/student.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Tab switching helpers for inline clicks
+    function switchStudentTab(tabName, btn) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+
+      const tabForm = document.getElementById("studentTabForm");
+      const tabHist = document.getElementById("studentTabHistory");
+
+      if (tabName === "formTab") {
+        tabForm.style.display = "block";
+        tabHist.style.display = "none";
+      } else {
+        tabForm.style.display = "none";
+        tabHist.style.display = "block";
+        STUDENT.loadMyComplaints();
+      }
+    }
+
+    function switchStudentAuthMode(mode) {
+      const loginTab = document.getElementById("btnTabStudentLogin");
+      const regTab = document.getElementById("btnTabStudentReg");
+      const loginWrapper = document.getElementById("studentLoginFormWrapper");
+      const regWrapper = document.getElementById("studentRegisterFormWrapper");
+
+      if (mode === "login") {
+        loginTab.classList.add("active");
+        regTab.classList.remove("active");
+        loginWrapper.style.display = "block";
+        regWrapper.style.display = "none";
+      } else {
+        loginTab.classList.remove("active");
+        regTab.classList.add("active");
+        loginWrapper.style.display = "none";
+        regWrapper.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
